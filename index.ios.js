@@ -11,41 +11,68 @@ var {
   Text,
   View,
   Image,
+  Navigator,
 } = React;
 
 var FBSDKCore = require('react-native-fbsdkcore');
 var FBSDKLogin = require('react-native-fbsdklogin');
 var {
+  FBSDKAccessToken,
+} = FBSDKCore;
+var {
   FBSDKLoginButton,
 } = FBSDKLogin;
 
+var LoginView = require('./app/views/LoginView.ios.js');
+var MainView = require('./app/views/MainView.ios.js');
+
 var KeepInTouch = React.createClass({
+  getInitialState: function() {
+    return {
+      accessToken: null,
+    }
+  },
+
+  renderScene: function(route, navigator) {
+    console.log(this.state.accessToken);
+    if (!this.state.accessToken) {
+      FBSDKAccessToken.getCurrentAccessToken((token) => {
+        if (token) {
+          this.setState({accessToken: token.tokenString});
+        }
+      });
+      return (
+        <LoginView onLogin={this._onLogin} />
+      );
+    }
+    if (route.id === 'Main') {
+      return (
+        <MainView onLogout={this._onLogout} />
+      );
+    }
+  },
+
   render: function() {
     return (
-        <View style={styles.container}>
-        <Image source={require('image!intro')} style={styles.image}>
-        <Text style={styles.title}>KeepInTouch</Text>
-        <FBSDKLoginButton
-          onLoginFinished={(error, result) => {
-            if (error) {
-              alert('Error logging in.');
-            } else {
-              if (result.isCanceled) {
-                alert('Login cancelled.');
-              } else {
-                alert('Logged in.');
-              }
-            }
-          }}
-          onLogoutFinished={() => alert('Logged out.')}
-          readPermissions={[]}
-          publishPermissions={['publish_actions']}/>
-        <Image source={require('image!white')} style={styles.button}>
-        <Text style={styles.buttonText}>Login without Facebook</Text>
-        </Image>
-        </Image>
-        </View>
+        <Navigator
+          initialRoute={{id: 'Main', index: 0}}
+          configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+          renderScene={this.renderScene}
+        />
     );
+  },
+
+  _onLogout: function() {
+    FBSDKAccessToken.setCurrentAccessToken(null);
+    this.setState({accessToken: null});
+  },
+
+  _onLogin: function() {
+    FBSDKAccessToken.getCurrentAccessToken((token) => {
+      if (token) {
+        this.setState({accessToken: token.tokenString});
+      }
+    });
   }
 });
 

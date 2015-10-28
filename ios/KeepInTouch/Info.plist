@@ -52,6 +52,29 @@
 <array>
     <string>fbauth2</string>
 </array>
+<key>NSAppTransportSecurity</key>
+<dict>
+	<key>NSAllowsArbitraryLoads</key><true/>
+
+  <key>NSExceptionDomains</key>
+  <dict>
+    <key>facebook.com</key>
+    <dict>
+      <key>NSIncludesSubdomains</key> <true/>
+      <key>NSThirdPartyExceptionRequiresForwardSecrecy</key> <false/>
+    </dict>
+    <key>fbcdn.net</key>
+    <dict>
+      <key>NSIncludesSubdomains</key> <true/>
+      <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>  <false/>
+    </dict>
+    <key>akamaihd.net</key>
+    <dict>
+      <key>NSIncludesSubdomains</key> <true/>
+      <key>NSThirdPartyExceptionRequiresForwardSecrecy</key> <false/>
+    </dict>
+  </dict>
+</dict>
 <key>CFBundleURLTypes</key>
 <array>
 	<dict>
