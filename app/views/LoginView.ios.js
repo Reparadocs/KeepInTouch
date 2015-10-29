@@ -1,7 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
@@ -12,6 +8,7 @@ var {
   View,
   Image,
   Navigator,
+  TouchableHighlight,
 } = React;
 
 var FBSDKCore = require('react-native-fbsdkcore');
@@ -45,12 +42,20 @@ var LoginView = React.createClass({
               readPermissions={[]}
               publishPermissions={[]}
             />
-            <Image source={require('image!white')} style={styles.button}>
-              <Text style={styles.buttonText}>Login without Facebook</Text>
-            </Image>
+            <TouchableHighlight onPress={this._onDiscreteLogin}>
+              <Image source={require('image!white')} style={styles.button}>
+                <Text style={styles.buttonText}>Login without Facebook</Text>
+              </Image>
+            </TouchableHighlight>
           </Image>
         </View>
     );
+  },
+
+  _onDiscreteLogin: function() {
+    this.props.navigator.push({
+      id: 'DiscreteLogin',
+    });
   }
 });
 

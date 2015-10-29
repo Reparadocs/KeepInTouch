@@ -1,7 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
@@ -25,24 +21,31 @@ var {
 
 var LoginView = require('./app/views/LoginView.ios.js');
 var MainView = require('./app/views/MainView.ios.js');
+var DiscreteLoginView = require('./app/views/DiscreteLoginView.ios.js');
+var api = require('./app/network/api.js');
 
 var KeepInTouch = React.createClass({
   getInitialState: function() {
     return {
-      accessToken: null,
+      token: null,
+    }
+  },
+
+  componentDidMount: function() {
+    if (!this.state.token) {
+      this._authenticate();
     }
   },
 
   renderScene: function(route, navigator) {
-    console.log(this.state.accessToken);
-    if (!this.state.accessToken) {
-      FBSDKAccessToken.getCurrentAccessToken((token) => {
-        if (token) {
-          this.setState({accessToken: token.tokenString});
-        }
-      });
+    if (route.id === 'DiscreteLogin') {
       return (
-        <LoginView onLogin={this._onLogin} />
+        <DiscreteLoginView onLogin={this._authenticate} navigator={navigator} />
+      );
+    }
+    if (!this.state.token) {
+      return (
+        <LoginView onLogin={this._authenticate} navigator={navigator} />
       );
     }
     if (route.id === 'Main') {
@@ -62,17 +65,21 @@ var KeepInTouch = React.createClass({
     );
   },
 
-  _onLogout: function() {
-    FBSDKAccessToken.setCurrentAccessToken(null);
-    this.setState({accessToken: null});
+  _authenticate: function() {
+    FBSDKAccessToken.getCurrentAccessToken((access_token) => {
+      if (access_token) {
+        api.post('auth/facebook/', {access_token: access_token.tokenString})
+          .then((responseData) => {
+            this.setState({'token': responseData.token});
+          })
+          .done();
+      }
+    })
   },
 
-  _onLogin: function() {
-    FBSDKAccessToken.getCurrentAccessToken((token) => {
-      if (token) {
-        this.setState({accessToken: token.tokenString});
-      }
-    });
+  _onLogout: function() {
+    FBSDKAccessToken.setCurrentAccessToken(null);
+    this.setState({token: null});
   }
 });
 
