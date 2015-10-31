@@ -22,25 +22,42 @@ var {
 var LoginView = require('./app/views/LoginView.ios.js');
 var MainView = require('./app/views/MainView.ios.js');
 var DiscreteLoginView = require('./app/views/DiscreteLoginView.ios.js');
-var api = require('./app/network/api.js');
+var LoadingView = require('./app/views/LoadingView.ios.js');
+var api = require('./app/global/api.js');
+var storage = require('./app/global/storage.js');
 
 var KeepInTouch = React.createClass({
   getInitialState: function() {
     return {
       token: null,
+      spinner: true,
     }
   },
 
   componentDidMount: function() {
+    this._loadInitialStorage().done();
+  },
+
+  _loadInitialStorage: async function() {
+    var storageObj =  await storage.loadStorage();
+    if (storageObj) {
+      this.setState({token: storageObj.token});
+    }
     if (!this.state.token) {
       this._authenticate();
     }
+    this.setState({spinner: false});
   },
 
   renderScene: function(route, navigator) {
+    if (this.state.spinner) {
+      return (
+        <LoadingView />
+      );
+    }
     if (route.id === 'DiscreteLogin') {
       return (
-        <DiscreteLoginView onLogin={this._authenticate} navigator={navigator} />
+        <DiscreteLoginView onLogin={this._setToken} navigator={navigator} />
       );
     }
     if (!this.state.token) {
@@ -70,16 +87,22 @@ var KeepInTouch = React.createClass({
       if (access_token) {
         api.post('auth/facebook/', {access_token: access_token.tokenString})
           .then((responseData) => {
-            this.setState({'token': responseData.token});
+            this._setToken(responseData.token).done();
           })
           .done();
       }
     })
   },
 
-  _onLogout: function() {
+  _setToken: async function(token) {
+    this.setState({token});
+    await storage.onValueChange('token', token);
+  },
+
+  _onLogout: async function() {
     FBSDKAccessToken.setCurrentAccessToken(null);
     this.setState({token: null});
+    await storage.removeStorage('token');
   }
 });
 

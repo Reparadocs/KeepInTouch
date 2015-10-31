@@ -24,7 +24,6 @@ var LoginView = React.createClass({
     return (
         <View style={styles.container}>
         <Image source={require('image!intro')} style={styles.image}>
-        <Text style={styles.title}>KeepInTouch</Text>
         <FBSDKLoginButton
           onLoginFinished={(error, result) => {
             if (error) {

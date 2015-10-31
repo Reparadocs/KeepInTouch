@@ -9,6 +9,7 @@ var {
   Image,
   Navigator,
   TouchableHighlight,
+  TouchableOpacity,
 } = React;
 
 var FBSDKCore = require('react-native-fbsdkcore');
@@ -25,7 +26,6 @@ var LoginView = React.createClass({
     return (
         <View style={styles.container}>
           <Image source={require('image!intro')} style={styles.image}>
-            <Text style={styles.title}>KeepInTouch</Text>
             <FBSDKLoginButton
               onLoginFinished={(error, result) => {
                 if (error) {
@@ -42,11 +42,11 @@ var LoginView = React.createClass({
               readPermissions={[]}
               publishPermissions={[]}
             />
-            <TouchableHighlight onPress={this._onDiscreteLogin}>
+            <TouchableOpacity onPress={this._onDiscreteLogin} activeOpacity={0.8}>
               <Image source={require('image!white')} style={styles.button}>
                 <Text style={styles.buttonText}>Login without Facebook</Text>
               </Image>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </Image>
         </View>
     );
@@ -68,7 +68,8 @@ var styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 50,
+    justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'transparent',
   },

@@ -9,63 +9,135 @@ var {
   Image,
   Navigator,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
+  ActivityIndicatorIOS,
+  NavigatorIOS,
 } = React;
 
-var api = require('../network/api.js');
+var api = require('../global/api.js');
 
 var DiscreteLoginView = React.createClass({
   getInitialState: function() {
     return {
       username: '',
       password: '',
+      errors: null,
+      spinner: false,
     };
   },
 
   render: function() {
     return (
+      <NavigatorIOS
+        style={{flex: 1}}
+        transparent={true}
+        initialRoute={{
+          onLeftButtonPress: () => this.props.navigator.pop(),
+          leftButtonTitle: '<',
+          component: DiscreteLogin,
+          title: 'Login',
+          passProps: {
+            onLogin: this.props.onLogin,
+            nav: this.props.navigator,
+          }
+        }}
+      />
+    );
+  }
+});
+
+var DiscreteLogin = React.createClass({
+  getInitialState: function() {
+    return {
+      username: '',
+      password: '',
+      errors: null,
+      spinner: false,
+    };
+  },
+
+  render: function() {
+    var spinner = null;
+    var errorBox = null;
+    if (this.state.spinner) {
+      spinner = <ActivityIndicatorIOS animating={true} size="large" />;
+    } else if (this.state.errors) {
+      errorBox = <Text style={styles.errors}>{this.state.errors}</Text>;
+    }
+    return (
         <View style={styles.container}>
-          <Image source={require('image!intro')} style={styles.image}>
-            <TextInput style={{color: 'white', borderWidth: 2, borderColor: 'white',  height: 40}} />
-            <Text style={styles.title}>KeepInTouch</Text>
-            <TextInput style={{height: 40, color: 'white', borderColor: 'gray', borderWidth: 1}}
- placeholder='Username' onChangeText={(text) => this.setState({text})} />
-            <TextInput placeholder='Password' onChangeText={(text) => this.setState({text})} />
-            <TouchableHighlight onPress={this._onLogin}>
+          <Image source={require('image!login')} style={styles.image}>
+            <View style={{width: 300, marginTop: 50}}>
+            <TextInput
+              style={styles.input}
+              placeholder='Username'
+              onChangeText={(username) => this.setState({username})}
+            />
+            <TextInput
+              secureTextEntry={true}
+              style={styles.input}
+              placeholder='Password'
+              onChangeText={(password) => this.setState({password})}
+            />
+            </View>
+            <TouchableOpacity onPress={this._onLogin}>
               <Image source={require('image!white')} style={styles.button}>
                 <Text style={styles.buttonText}>Login</Text>
               </Image>
-            </TouchableHighlight>
-            <TouchableHighlight onPress={this._onCreate}>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this._onCreate}>
               <Image source={require('image!white')} style={styles.button}>
                 <Text style={styles.buttonText}>Create Account</Text>
               </Image>
-            </TouchableHighlight>
+            </TouchableOpacity>
+            {spinner}
+            {errorBox}
           </Image>
         </View>
     );
   },
 
   _onLogin: function() {
+    this.setState({spinner: true})
     api.post('auth/login/', {
         username: this.state.username,
         password: this.state.password
       })
       .then((responseData) => {
-        this.setState({'token': responseData.token});
+        if (responseData.token) {
+          this.props.onLogin(responseData.token);
+          this.props.nav.push({
+            id: 'Main',
+          });
+        } else {
+          console.log(responseData);
+          this.setState({errors: responseData.errors, spinner: false})
+        }
       })
       .done();
   },
 
   _onCreate: function() {
+    this.setState({spinner: true});
     api.post('auth/create/', {
         username: this.state.username,
         password: this.state.password
       })
       .then((responseData) => {
-        this.setState({'token': responseData.token});
+        if (responseData.token) {
+          this.props.onLogin(responseData.token);
+          this.props.nav.push({
+            id: 'Main',
+          });
+        } else {
+          this.setState({errors: responseData.errors, spinner: false});
+        }
       })
       .done();
+  },
+
+  handleBackButtonPress: function() {
+    this.props.nav.push({id: 'Main'});
   }
 });
 
@@ -76,9 +148,22 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
+  errors: {
+    backgroundColor: 'rgba(256,0,0,0.5)',
+    padding: 10,
+    color:'rgba(256,256,256,0.9)',
+    width: 300,
+    height: 40,
+    borderRadius: 4,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
   input: {
-    color: 'white',
-    flex: 1,
+    backgroundColor:'rgba(256,256,256,0.6)',
+    height: 40,
+    borderRadius: 4,
+    marginBottom: 10,
+    padding: 4,
   },
   image: {
     flex: 1,
@@ -89,7 +174,7 @@ var styles = StyleSheet.create({
   button: {
     width: 200,
     height: 50,
-    marginTop: 10,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 3,
