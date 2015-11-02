@@ -11,42 +11,12 @@ var {
   TextInput,
   TouchableOpacity,
   ActivityIndicatorIOS,
-  NavigatorIOS,
+  TouchableHighlight,
 } = React;
 
 var api = require('../global/api.js');
 
 var DiscreteLoginView = React.createClass({
-  getInitialState: function() {
-    return {
-      username: '',
-      password: '',
-      errors: null,
-      spinner: false,
-    };
-  },
-
-  render: function() {
-    return (
-      <NavigatorIOS
-        style={{flex: 1}}
-        transparent={true}
-        initialRoute={{
-          onLeftButtonPress: () => this.props.navigator.pop(),
-          leftButtonTitle: '<',
-          component: DiscreteLogin,
-          title: 'Login',
-          passProps: {
-            onLogin: this.props.onLogin,
-            nav: this.props.navigator,
-          }
-        }}
-      />
-    );
-  }
-});
-
-var DiscreteLogin = React.createClass({
   getInitialState: function() {
     return {
       username: '',
@@ -67,7 +37,8 @@ var DiscreteLogin = React.createClass({
     return (
         <View style={styles.container}>
           <Image source={require('image!login')} style={styles.image}>
-            <View style={{width: 300, marginTop: 50}}>
+            <View style={styles.container} >
+            <View style={{width: 300, marginTop: 100}}>
             <TextInput
               style={styles.input}
               placeholder='Username'
@@ -92,6 +63,14 @@ var DiscreteLogin = React.createClass({
             </TouchableOpacity>
             {spinner}
             {errorBox}
+            </View>
+            <View style={{height: 100}}>
+            <TouchableOpacity onPress={this._onBack}>
+              <Image source={require('image!white')} style={styles.backButton}>
+                <Text style={styles.backButtonText}>Back</Text>
+              </Image>
+            </TouchableOpacity>
+            </View>
           </Image>
         </View>
     );
@@ -106,7 +85,7 @@ var DiscreteLogin = React.createClass({
       .then((responseData) => {
         if (responseData.token) {
           this.props.onLogin(responseData.token);
-          this.props.nav.push({
+          this.props.navigator.push({
             id: 'Main',
           });
         } else {
@@ -126,7 +105,7 @@ var DiscreteLogin = React.createClass({
       .then((responseData) => {
         if (responseData.token) {
           this.props.onLogin(responseData.token);
-          this.props.nav.push({
+          this.props.navigator.push({
             id: 'Main',
           });
         } else {
@@ -136,8 +115,10 @@ var DiscreteLogin = React.createClass({
       .done();
   },
 
-  handleBackButtonPress: function() {
-    this.props.nav.push({id: 'Main'});
+  _onBack: function() {
+    this.props.navigator.push({
+      id: 'Main',
+    });
   }
 });
 
@@ -146,7 +127,6 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   errors: {
     backgroundColor: 'rgba(256,0,0,0.5)',
@@ -178,6 +158,20 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 3,
+  },
+  backButton: {
+    width: 200,
+    height: 50,
+    tintColor: '#3b5998',
+    marginBottom: 10,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    marginTop: 20,
+  },
+  backButtonText: {
+    color: 'white'
   },
   buttonText: {
     color: '#3b5998',

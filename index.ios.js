@@ -76,7 +76,7 @@ var KeepInTouch = React.createClass({
     return (
         <Navigator
           initialRoute={{id: 'Main', index: 0}}
-          configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+          configureScene={() => Navigator.SceneConfigs.PushFromRight}
           renderScene={this.renderScene}
         />
     );
