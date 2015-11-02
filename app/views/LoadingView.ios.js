@@ -2,12 +2,9 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
   StyleSheet,
-  Text,
   View,
   Image,
-  Navigator,
   ActivityIndicatorIOS,
 } = React;
 
@@ -35,26 +32,6 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-  },
-  button: {
-    width: 200,
-    height: 50,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 3,
-  },
-  buttonText: {
-    color: '#3b5998',
-    fontWeight: 'bold',
-  },
-  title: {
-    color: 'orange',
-    fontFamily: 'Baskerville',
-    fontStyle: 'italic',
-    fontSize: 30,
-    fontWeight: '800',
-    marginBottom: 400,
   }
 });
 

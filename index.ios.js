@@ -3,7 +3,6 @@
 var React = require('react-native');
 var {
   AppRegistry,
-  StyleSheet,
   Text,
   View,
   Image,
@@ -103,41 +102,6 @@ var KeepInTouch = React.createClass({
     FBSDKAccessToken.setCurrentAccessToken(null);
     this.setState({token: null});
     await storage.removeStorage('token');
-  }
-});
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  button: {
-    width: 200,
-    height: 50,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 3,
-  },
-  buttonText: {
-    color: '#3b5998',
-    fontWeight: 'bold',
-  },
-  title: {
-    color: 'orange',
-    fontFamily: 'Baskerville',
-    fontStyle: 'italic',
-    fontSize: 30,
-    fontWeight: '800',
-    marginBottom: 400,
   }
 });
 

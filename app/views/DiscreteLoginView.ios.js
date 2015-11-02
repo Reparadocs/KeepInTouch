@@ -2,7 +2,6 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
@@ -11,7 +10,6 @@ var {
   TextInput,
   TouchableOpacity,
   ActivityIndicatorIOS,
-  TouchableHighlight,
 } = React;
 
 var api = require('../global/api.js');
@@ -37,39 +35,39 @@ var DiscreteLoginView = React.createClass({
     return (
         <View style={styles.container}>
           <Image source={require('image!login')} style={styles.image}>
-            <View style={styles.container} >
-            <View style={{width: 300, marginTop: 100}}>
-            <TextInput
-              style={styles.input}
-              placeholder='Username'
-              onChangeText={(username) => this.setState({username})}
-            />
-            <TextInput
-              secureTextEntry={true}
-              style={styles.input}
-              placeholder='Password'
-              onChangeText={(password) => this.setState({password})}
-            />
+            <View style={styles.topContainer}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Username"
+                  onChangeText={(username) => this.setState({username})}
+                />
+                <TextInput
+                  secureTextEntry={true}
+                  style={styles.input}
+                  placeholder="Password"
+                  onChangeText={(password) => this.setState({password})}
+                />
+              </View>
+              <TouchableOpacity onPress={this._onLogin}>
+                <Image source={require('image!white')} style={styles.button}>
+                  <Text style={styles.buttonText}>Login</Text>
+                </Image>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this._onCreate}>
+                <Image source={require('image!white')} style={styles.button}>
+                  <Text style={styles.buttonText}>Create Account</Text>
+                </Image>
+              </TouchableOpacity>
+              {spinner}
+              {errorBox}
             </View>
-            <TouchableOpacity onPress={this._onLogin}>
-              <Image source={require('image!white')} style={styles.button}>
-                <Text style={styles.buttonText}>Login</Text>
-              </Image>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this._onCreate}>
-              <Image source={require('image!white')} style={styles.button}>
-                <Text style={styles.buttonText}>Create Account</Text>
-              </Image>
-            </TouchableOpacity>
-            {spinner}
-            {errorBox}
-            </View>
-            <View style={{height: 100}}>
-            <TouchableOpacity onPress={this._onBack}>
-              <Image source={require('image!white')} style={styles.backButton}>
-                <Text style={styles.backButtonText}>Back</Text>
-              </Image>
-            </TouchableOpacity>
+            <View style={styles.bottomContainer}>
+              <TouchableOpacity onPress={this._onBack}>
+                <Image source={require('image!white')} style={styles.backButton}>
+                  <Text style={styles.backButtonText}>Back</Text>
+                </Image>
+              </TouchableOpacity>
             </View>
           </Image>
         </View>
@@ -128,6 +126,18 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  inputContainer: {
+    width: 300,
+    marginTop: 100,
+  },
+  topContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomContainer: {
+    height: 100,
+  },
   errors: {
     backgroundColor: 'rgba(256,0,0,0.5)',
     padding: 10,
@@ -176,14 +186,6 @@ var styles = StyleSheet.create({
   buttonText: {
     color: '#3b5998',
     fontWeight: 'bold',
-  },
-  title: {
-    color: 'orange',
-    fontFamily: 'Baskerville',
-    fontStyle: 'italic',
-    fontSize: 30,
-    fontWeight: '800',
-    marginBottom: 400,
   }
 });
 

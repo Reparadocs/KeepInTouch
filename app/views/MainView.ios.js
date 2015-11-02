@@ -8,42 +8,20 @@ var {
   View,
   Image,
   Navigator,
+  TouchableOpacity,
 } = React;
-
-var FBSDKCore = require('react-native-fbsdkcore');
-var FBSDKLogin = require('react-native-fbsdklogin');
-var {
-  FBSDKAccessToken,
-} = FBSDKCore;
-var {
-  FBSDKLoginButton,
-} = FBSDKLogin;
 
 var LoginView = React.createClass({
   render: function() {
     return (
         <View style={styles.container}>
-        <Image source={require('image!intro')} style={styles.image}>
-        <FBSDKLoginButton
-          onLoginFinished={(error, result) => {
-            if (error) {
-              alert('Error logging in.');
-            } else {
-              if (result.isCancelled) {
-                alert('Login cancelled.');
-              } else {
-                console.log(result);
-                alert('Logged in.');
-              }
-            }
-          }}
-          onLogoutFinished={() => this.props.onLogout()}
-          readPermissions={[]}
-          publishPermissions={['publish_actions']} />
-        <Image source={require('image!white')} style={styles.button}>
-        <Text style={styles.buttonText}>This is Main View</Text>
-        </Image>
-        </Image>
+          <Image source={require('image!intro')} style={styles.image}>
+            <TouchableOpacity onPress={this.props.onLogout}>
+              <Image source={require('image!white')} style={styles.button}>
+                <Text style={styles.buttonText}>Log Out</Text>
+              </Image>
+            </TouchableOpacity>
+          </Image>
         </View>
     );
   }

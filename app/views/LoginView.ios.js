@@ -2,21 +2,15 @@
 
 var React = require('react-native');
 var {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
   Image,
   Navigator,
-  TouchableHighlight,
   TouchableOpacity,
 } = React;
 
-var FBSDKCore = require('react-native-fbsdkcore');
 var FBSDKLogin = require('react-native-fbsdklogin');
-var {
-  FBSDKAccessToken,
-} = FBSDKCore;
 var {
   FBSDKLoginButton,
 } = FBSDKLogin;
@@ -38,11 +32,10 @@ var LoginView = React.createClass({
                   }
                 }
               }}
-              onLogoutFinished={() => alert('Logged out.')}
               readPermissions={[]}
               publishPermissions={[]}
             />
-            <TouchableOpacity onPress={this._onDiscreteLogin} activeOpacity={0.8}>
+            <TouchableOpacity onPress={this._onDiscreteLogin}>
               <Image source={require('image!white')} style={styles.button}>
                 <Text style={styles.buttonText}>Login without Facebook</Text>
               </Image>
@@ -84,14 +77,6 @@ var styles = StyleSheet.create({
   buttonText: {
     color: '#3b5998',
     fontWeight: 'bold',
-  },
-  title: {
-    color: 'orange',
-    fontFamily: 'Baskerville',
-    fontStyle: 'italic',
-    fontSize: 30,
-    fontWeight: '800',
-    marginBottom: 400,
   }
 });
 
