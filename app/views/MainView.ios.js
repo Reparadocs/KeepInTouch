@@ -9,20 +9,53 @@ var {
   Image,
   Navigator,
   TouchableOpacity,
+  TabBarIOS,
 } = React;
 
+var Settings = require('../components/Settings.ios.js');
+var Contacts = require('../components/Contacts.ios.js');
+
 var LoginView = React.createClass({
+  getInitialState: function() {
+    return {
+      selectedTab: 'contacts',
+    };
+  },
+
   render: function() {
     return (
-        <View style={styles.container}>
-          <Image source={require('image!intro')} style={styles.image}>
-            <TouchableOpacity onPress={this.props.onLogout}>
-              <Image source={require('image!white')} style={styles.button}>
-                <Text style={styles.buttonText}>Log Out</Text>
-              </Image>
-            </TouchableOpacity>
-          </Image>
-        </View>
+      <TabBarIOS>
+        <TabBarIOS.Item
+          systemIcon='contacts'
+          selected={this.state.selectedTab === 'contacts'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'contacts',
+            });
+          }}>
+          <Contacts />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          systemIcon='favorites'
+          selected={this.state.selectedTab === 'favorites'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'favorites',
+            });
+          }}>
+          <Text>Contacts</Text>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          systemIcon='more'
+          selected={this.state.selectedTab === 'settings'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'settings',
+            });
+          }}>
+          <Settings onLogout={this.props.onLogout} />
+        </TabBarIOS.Item>
+      </TabBarIOS>
     );
   }
 });
