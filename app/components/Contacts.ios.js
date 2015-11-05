@@ -34,33 +34,25 @@ var Contacts = React.createClass({
 var ContactsList = React.createClass({
   getInitialState: function() {
     return {
-      dataSource: null,
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
     };
   },
 
   componentDidMount: function() {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     UserContacts.getAll((err, contacts) => {
       if (err) {
 
       } else {
         this.setState({
-          dataSource: ds.cloneWithRows(contacts)
+          dataSource: this.state.dataSource.cloneWithRows(contacts)
         });
       }
     });
   },
 
   render: function() {
-    if (!this.state.dataSource) {
-      return (
-        <ActivityIndicatorIOS animating={true} size="large" />
-      );
-    }
-
     return (
       <ListView
-        style={styles.list}
         dataSource={this.state.dataSource}
         renderRow={this._rowContent}
       />
@@ -87,11 +79,11 @@ var ContactsList = React.createClass({
   },
 
   _rowPress: function(rowData) {
-    console.log('what');
+    console.log(rowData);
     this.props.navigator.push({
       component: AddContact,
-      title: 'Add Contact',
-      passProps: {contact: rowData},
+      title: 'Add Favorite',
+      passProps: {contactData: rowData},
     });
   }
 });
@@ -105,9 +97,6 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  list: {
-    marginTop: 65,
   },
   row: {
     transform: [{scaleX: 0.95}],
