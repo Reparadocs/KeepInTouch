@@ -10,11 +10,13 @@ var {
   TextInput,
   TouchableOpacity,
   ActivityIndicatorIOS,
-  DatePickerIOS,
-  Modal,
+  NavigatorIOS,
+  PickerIOS,
 } = React;
 
+var Modal = require('react-native-modalbox')
 var api = require('../global/api.js');
+var util = require('../global/util.js');
 var { Icon, } = require('react-native-icons');
 
 
@@ -26,7 +28,6 @@ var AddContact = React.createClass({
       email: this.props.contactData.emailAddresses.length ? this.props.contactData.emailAddresses[0].email : '',
       event: '',
       timeNumber: 30,
-      timeUnit: 'days',
       errors: null,
       spinner: false,
       modal: false,
@@ -34,6 +35,7 @@ var AddContact = React.createClass({
   },
 
   render: function() {
+        var pick = this.state.modal ? <PickerIOS /> : null;
     return (
         <View style={styles.container}>
         <InputRow
@@ -63,21 +65,27 @@ var AddContact = React.createClass({
           />
           <View style={styles.gap} />
           <Text style={styles.reminderText}>Remind me every</Text>
-          <View style={styles.timeInputContainer}>
-          <Text style={styles.reminderText}>{this.state.timeNumber} {this.state.timeUnit}</Text>
-          </View>
-        <Modal
-          animated={true}
-          transparent={false}
-          visible={this.state.modal}>
-          <DatePickerIOS
-            mode="time"
-            date={this.state.date}
-            onDateChange={(date) => this.setState({date})}
-          />
-        </Modal>
-
+          <TouchableOpacity style={styles.timeInputContainer} onPress={() => this.setState({modal: true})}>
+          <Text style={styles.reminderText}>{this.state.timeNumber} days</Text>
+          </TouchableOpacity>
         </View>
+        <Modal style={{height: 400}} position={"bottom"} isOpen={this.state.modal} swipeToClose={false}>
+        <View style={{flexDirection: 'row'}}>
+             <PickerIOS
+             style={{flex: 0.8}}
+               selectedValue={this.state.timeNumber}
+               onValueChange={(timeNumber) => this.setState({timeNumber})}>
+               {util.range(1, 100).map((num) => (
+                 <PickerIOS.Item
+                   key={num}
+                   value={num}
+                   label={num.toString()}
+                 />
+               ))}
+             </PickerIOS>
+             <Text style={{fontSize: 22, flex: 0.2, marginTop: 95, marginLeft: 20}}>days</Text>
+            </View>
+        </Modal>
         </View>
     );
   }
