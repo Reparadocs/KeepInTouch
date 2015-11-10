@@ -69,7 +69,16 @@ var AddContact = React.createClass({
           <Text style={styles.reminderText}>{this.state.timeNumber} days</Text>
           </TouchableOpacity>
         </View>
-        <Modal style={{height: 400}} position={"bottom"} isOpen={this.state.modal} swipeToClose={false}>
+        <View style={{marginTop: 100}}/>
+        <TouchableOpacity onPress={this._onSave}>
+          <Image source={require('image!white')} style={styles.button}>
+            <Text style={styles.buttonText}>Save Favorite</Text>
+          </Image>
+        </TouchableOpacity>
+        <Modal style={{height: 350}} position={"bottom"} isOpen={this.state.modal} swipeToClose={false}>
+        <TouchableOpacity onPress={() => this.setState({modal: false})}>
+        <Text style={{color: '007AFF', alignSelf: 'flex-end', fontSize: 18, marginTop: 5, marginRight: 10}}>Done</Text>
+        </TouchableOpacity>
         <View style={{flexDirection: 'row'}}>
              <PickerIOS
              style={{flex: 0.8}}
@@ -86,8 +95,18 @@ var AddContact = React.createClass({
              <Text style={{fontSize: 22, flex: 0.2, marginTop: 95, marginLeft: 20}}>days</Text>
             </View>
         </Modal>
+
         </View>
     );
+  },
+
+  _onSave: async function() {
+    this.setState({spinner: true});
+    await api.post('contacts/create', {access_token: access_token.tokenString})
+      .then((responseData) => {
+        this._setToken(responseData.token).done();
+      });
+    this.props.switchTab();
   }
 });
 
@@ -136,6 +155,20 @@ var styles = StyleSheet.create({
   },
   bottomContainer: {
     height: 100,
+  },
+  button: {
+    width: 200,
+    height: 50,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 3,
+    tintColor: 'rgba(128, 128, 128, 0.1)',
+  },
+  buttonText: {
+    color: '#007AFF',
+    backgroundColor: 'transparent',
+    fontWeight: 'bold',
   },
   reminderText: {
     flex: 0.25,

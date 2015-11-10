@@ -33,7 +33,7 @@ var LoginView = React.createClass({
               selectedTab: 'contacts',
             });
           }}>
-          <Contacts />
+          <Contacts switchTab={this._switchTab} />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           systemIcon='favorites'
@@ -57,6 +57,12 @@ var LoginView = React.createClass({
         </TabBarIOS.Item>
       </TabBarIOS>
     );
+  },
+
+  _switchTab: function() {
+    this.setState({
+      selectedTab: 'favorites',
+    });
   }
 });
 

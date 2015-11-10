@@ -25,6 +25,9 @@ var Contacts = React.createClass({
         initialRoute={{
           component: ContactsList,
           title: 'Contacts',
+          passProps: {
+            switchTab: this.props.switchTab,
+          },
         }}
       />
     );
@@ -79,11 +82,13 @@ var ContactsList = React.createClass({
   },
 
   _rowPress: function(rowData) {
-    console.log(rowData);
     this.props.navigator.push({
       component: AddContact,
       title: 'Add Favorite',
-      passProps: {contactData: rowData},
+      passProps: {
+        contactData: rowData,
+        switchTab: this.props.switchTab,
+      },
     });
   }
 });
