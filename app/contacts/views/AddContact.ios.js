@@ -21,21 +21,30 @@ var DaysInputRow = require('../components/DaysInputRow.ios.js');
 var DaysPicker = require('../components/DaysPicker.ios.js');
 var api = require('../../global/api.js');
 var util = require('../../global/util.js');
-var { Icon, } = require('react-native-icons');
 
 
 var AddContact = React.createClass({
   getInitialState: function() {
     return {
-      name: this.props.contactData.givenName + ' ' + this.props.contactData.familyName,
-      phone: this.props.contactData.phoneNumbers.length ? this.props.contactData.phoneNumbers[0].number : '',
-      email: this.props.contactData.emailAddresses.length ? this.props.contactData.emailAddresses[0].email : '',
+      name: '',
+      phone: '',
+      email: '',
       event: '',
       days: 30,
       errors: null,
       spinner: false,
       modal: false,
     };
+  },
+
+  componentDidMount: function() {
+    if (this.props.contactData) {
+      this.setState({
+        name: this.props.contactData.givenName + ' ' + this.props.contactData.familyName,
+        phone: this.props.contactData.phoneNumbers.length ? this.props.contactData.phoneNumbers[0].number : '',
+        email: this.props.contactData.emailAddresses.length ? this.props.contactData.emailAddresses[0].email : '',
+      });
+    }
   },
 
   render: function() {
@@ -92,9 +101,9 @@ var AddContact = React.createClass({
           days={this.state.days}
           onPress={() => this.setState({modal: true})}
         />
-        <View style={{marginTop: 50}} />
+        <View style={styles.gap} />
           {errors}
-        <View style={{marginTop: 50}} />
+        <View style={styles.gap} />
           {spinner}
           {saveButton}
         <DaysPicker
@@ -117,6 +126,7 @@ var AddContact = React.createClass({
       })
       .then((responseData) => {
         if (responseData.success) {
+          this.props.navigator.pop();
           this.props.switchTab();
         }
         else {
@@ -132,6 +142,9 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 64,
+  },
+  gap: {
+    marginTop: 50,
   },
   topContainer: {
     flex: 1,

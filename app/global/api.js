@@ -10,12 +10,30 @@ var post = async function(endpoint, body) {
         'Authorization': 'Token ' + this.access_token,
       },
     })
-    .then((response) => response.json());
+    .then((response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        return response;
+      }
+    });
 };
 
 var get = async function(endpoint) {
-  return await fetch(API_URL + endpoint)
-    .then((response) => response.json());
+  return await fetch(API_URL + endpoint,
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Token ' + this.access_token,
+      },
+    })
+    .then((response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response.json();
+      } else {
+        return response;
+      }
+    });
 }
 
 exports.post = post;

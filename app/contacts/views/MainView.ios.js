@@ -14,6 +14,7 @@ var {
 
 var Settings = require('./Settings.ios.js');
 var Contacts = require('./Contacts.ios.js');
+var Favorites = require('./Favorites.ios.js');
 
 var LoginView = React.createClass({
   getInitialState: function() {
@@ -43,7 +44,7 @@ var LoginView = React.createClass({
               selectedTab: 'favorites',
             });
           }}>
-          <Text>Contacts</Text>
+          <Favorites />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           systemIcon='more'

@@ -15,15 +15,15 @@ var {
 } = React;
 
 var AddContact = require('./AddContact.ios.js');
-var UserContacts = require('react-native-contacts');
+var api = require('../../global/api.js');
 
-var Contacts = React.createClass({
+var Favorites = React.createClass({
   render: function() {
     return (
       <NavigatorIOS
         style={styles.container}
         initialRoute={{
-          component: ContactsList,
+          component: FavoritesList,
           title: 'Contacts',
           passProps: {
             switchTab: this.props.switchTab,
@@ -34,7 +34,7 @@ var Contacts = React.createClass({
   }
 });
 
-var ContactsList = React.createClass({
+var FavoritesList = React.createClass({
   getInitialState: function() {
     return {
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
@@ -42,15 +42,21 @@ var ContactsList = React.createClass({
   },
 
   componentDidMount: function() {
-    UserContacts.getAll((err, contacts) => {
-      if (err) {
-
-      } else {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(contacts)
-        });
-      }
-    });
+    console.log(api.access_token);
+    api.get('contacts/list/')
+      .then((responseData) => {
+        console.log(responseData.status);
+        if (!responseData.status) {
+          this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(responseData),
+          });
+        }
+        else {
+          console.log(responseData.status);
+          //errors
+        }
+      })
+      .done();
   },
 
   render: function() {
@@ -63,21 +69,17 @@ var ContactsList = React.createClass({
   },
 
   _rowContent: function(rowData) {
+    console.log(rowData);
     return (
       <View>
-        <TouchableOpacity onPress={() => this._rowPress(rowData)}>
           <View style={styles.listContainer}>
             <Text style={styles.rowText}>
-              {rowData.givenName}
-              <Text style={styles.boldText}>
-                {" "}{rowData.familyName}
-              </Text>
+              {rowData.name}
             </Text>
             <Text style={styles.rowAdd}>
               +
             </Text>
           </View>
-        </TouchableOpacity>
         <View style={styles.row} />
       </View>
     );
@@ -134,4 +136,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = Contacts;
+module.exports = Favorites;
