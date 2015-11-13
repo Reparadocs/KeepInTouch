@@ -5,7 +5,10 @@ var post = async function(endpoint, body) {
     {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token ' + this.access_token,
+      },
     })
     .then((response) => response.json());
 };

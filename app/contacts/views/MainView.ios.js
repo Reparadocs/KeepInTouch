@@ -12,8 +12,8 @@ var {
   TabBarIOS,
 } = React;
 
-var Settings = require('../components/Settings.ios.js');
-var Contacts = require('../components/Contacts.ios.js');
+var Settings = require('./Settings.ios.js');
+var Contacts = require('./Contacts.ios.js');
 
 var LoginView = React.createClass({
   getInitialState: function() {

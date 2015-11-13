@@ -18,10 +18,10 @@ var {
   FBSDKLoginButton,
 } = FBSDKLogin;
 
-var LoginView = require('./app/views/LoginView.ios.js');
-var MainView = require('./app/views/MainView.ios.js');
-var DiscreteLoginView = require('./app/views/DiscreteLoginView.ios.js');
-var LoadingView = require('./app/views/LoadingView.ios.js');
+var LoginView = require('./app/auth/views/LoginView.ios.js');
+var MainView = require('./app/contacts/views/MainView.ios.js');
+var DiscreteLoginView = require('./app/auth/views/DiscreteLoginView.ios.js');
+var LoadingView = require('./app/auth/views/LoadingView.ios.js');
 var api = require('./app/global/api.js');
 var storage = require('./app/global/storage.js');
 
@@ -39,10 +39,15 @@ var KeepInTouch = React.createClass({
 
   _loadInitialStorage: async function() {
     var storageObj =  await storage.loadStorage();
+    var tokenSet = false;
     if (storageObj) {
-      this.setState({token: storageObj.token});
+      if (storageObj.token) {
+        this.setState({token: storageObj.token});
+        api.access_token = storageObj.token;
+        tokenSet = true;
+      }
     }
-    if (!this.state.token) {
+    if (!tokenSet) {
       this._authenticate();
     }
     this.setState({spinner: false});
@@ -59,6 +64,7 @@ var KeepInTouch = React.createClass({
         <DiscreteLoginView onLogin={this._setToken} navigator={navigator} />
       );
     }
+    console.log(this.state.token);
     if (!this.state.token) {
       return (
         <LoginView onLogin={this._authenticate} navigator={navigator} />
@@ -96,6 +102,7 @@ var KeepInTouch = React.createClass({
   _setToken: async function(token) {
     this.setState({token});
     await storage.onValueChange('token', token);
+    api.access_token = token;
   },
 
   _onLogout: async function() {

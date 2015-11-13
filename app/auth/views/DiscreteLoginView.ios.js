@@ -12,7 +12,8 @@ var {
   ActivityIndicatorIOS,
 } = React;
 
-var api = require('../global/api.js');
+var api = require('../../global/api.js');
+var Button = require('../../global/components/Button.ios.js');
 
 var DiscreteLoginView = React.createClass({
   getInitialState: function() {
@@ -27,10 +28,18 @@ var DiscreteLoginView = React.createClass({
   render: function() {
     var spinner = null;
     var errorBox = null;
+    var loginButtons = null;
     if (this.state.spinner) {
       spinner = <ActivityIndicatorIOS animating={true} size="large" />;
     } else if (this.state.errors) {
       errorBox = <Text style={styles.errors}>{this.state.errors}</Text>;
+    }
+    if (!this.state.spinner) {
+      loginButtons =
+        <View>
+          <Button buttonText='Login' onPress={this._onLogin} />
+          <Button buttonText='Create Account' onPress={this._onCreate} />
+        </View>;
     }
     return (
         <View style={styles.container}>
@@ -49,16 +58,7 @@ var DiscreteLoginView = React.createClass({
                   onChangeText={(password) => this.setState({password})}
                 />
               </View>
-              <TouchableOpacity onPress={this._onLogin}>
-                <Image source={require('image!white')} style={styles.button}>
-                  <Text style={styles.buttonText}>Login</Text>
-                </Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this._onCreate}>
-                <Image source={require('image!white')} style={styles.button}>
-                  <Text style={styles.buttonText}>Create Account</Text>
-                </Image>
-              </TouchableOpacity>
+              {loginButtons}
               {spinner}
               {errorBox}
             </View>
@@ -87,7 +87,6 @@ var DiscreteLoginView = React.createClass({
             id: 'Main',
           });
         } else {
-          console.log(responseData);
           this.setState({errors: responseData.errors, spinner: false})
         }
       })
@@ -161,14 +160,6 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
-  button: {
-    width: 200,
-    height: 50,
-    marginBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 3,
-  },
   backButton: {
     width: 200,
     height: 50,
@@ -182,10 +173,6 @@ var styles = StyleSheet.create({
   },
   backButtonText: {
     color: 'white'
-  },
-  buttonText: {
-    color: '#3b5998',
-    fontWeight: 'bold',
   }
 });
 
