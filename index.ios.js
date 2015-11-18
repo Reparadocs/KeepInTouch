@@ -44,6 +44,7 @@ var KeepInTouch = React.createClass({
       if (storageObj.token) {
         this.setState({token: storageObj.token});
         api.access_token = storageObj.token;
+        console.log(api.access_token);
         tokenSet = true;
       }
     }

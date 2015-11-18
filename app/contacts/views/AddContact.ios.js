@@ -39,11 +39,20 @@ var AddContact = React.createClass({
 
   componentDidMount: function() {
     if (this.props.contactData) {
-      this.setState({
-        name: this.props.contactData.givenName + ' ' + this.props.contactData.familyName,
-        phone: this.props.contactData.phoneNumbers.length ? this.props.contactData.phoneNumbers[0].number : '',
-        email: this.props.contactData.emailAddresses.length ? this.props.contactData.emailAddresses[0].email : '',
-      });
+      if (this.props.contactData.name) {
+        this.setState({
+          name: this.props.contactData.name,
+          phone: this.props.contactData.phone,
+          email: this.props.contactData.email,
+          days: this.props.contactData.reminder,
+        });
+      } else {
+        this.setState({
+          name: util.getContactName(this.props.contactData),
+          phone: this.props.contactData.phoneNumbers.length ? this.props.contactData.phoneNumbers[0].number : '',
+          email: this.props.contactData.emailAddresses.length ? this.props.contactData.emailAddresses[0].email : '',
+        });
+      }
     }
   },
 
@@ -118,7 +127,11 @@ var AddContact = React.createClass({
 
   _onSave: function() {
     this.setState({spinner: true});
-    api.post('contacts/create/', {
+    var endpoint = 'contacts/create/';
+    if (this.props.edit) {
+      endpoint = 'contacts/edit/' + this.props.contactData.id.toString() + '/';
+    }
+    api.post(endpoint, {
         name: this.state.name,
         phone: this.state.phone,
         email: this.state.email,
@@ -126,8 +139,17 @@ var AddContact = React.createClass({
       })
       .then((responseData) => {
         if (responseData.success) {
+          if (this.props.removeContact) {
+            this.props.removeContact(this.state.name);
+          }
           this.props.navigator.pop();
-          this.props.switchTab();
+          if (this.props.switchTab) {
+            this.props.switchTab();
+          }
+          this.props.onAdd();
+          if (this.props.refresh) {
+            this.props.refresh();
+          }
         }
         else {
           this.setState({spinner: false});

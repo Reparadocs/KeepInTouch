@@ -15,11 +15,17 @@ var {
 var Settings = require('./Settings.ios.js');
 var Contacts = require('./Contacts.ios.js');
 var Favorites = require('./Favorites.ios.js');
+var EventEmitter = require('EventEmitter');
 
 var LoginView = React.createClass({
+  componentWillMount: function() {
+    this.eventEmitter = new EventEmitter();
+  },
+
   getInitialState: function() {
     return {
       selectedTab: 'contacts',
+      refresh: false,
     };
   },
 
@@ -34,7 +40,7 @@ var LoginView = React.createClass({
               selectedTab: 'contacts',
             });
           }}>
-          <Contacts switchTab={this._switchTab} />
+          <Contacts switchTab={this._switchTab} onAdd={this._onAdd} />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           systemIcon='favorites'
@@ -44,7 +50,12 @@ var LoginView = React.createClass({
               selectedTab: 'favorites',
             });
           }}>
-          <Favorites />
+          <Favorites
+            events={this.eventEmitter}
+            onAdd={this._onAdd}
+            refresh={this.state.refresh}
+            onRefresh={this._onRefresh}
+          />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           systemIcon='more'
@@ -64,7 +75,15 @@ var LoginView = React.createClass({
     this.setState({
       selectedTab: 'favorites',
     });
-  }
+  },
+
+  _onRefresh: function() {
+    this.setState({refresh: false});
+  },
+
+  _onAdd: function() {
+    this.eventEmitter.emit('addEvent');
+  },
 });
 
 var styles = StyleSheet.create({

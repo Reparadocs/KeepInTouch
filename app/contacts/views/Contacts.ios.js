@@ -14,6 +14,8 @@ var {
   TouchableOpacity,
 } = React;
 
+var api = require('../../global/api.js');
+var util = require('../../global/util.js');
 var AddContact = require('./AddContact.ios.js');
 var UserContacts = require('react-native-contacts');
 
@@ -21,13 +23,24 @@ var Contacts = React.createClass({
   render: function() {
     return (
       <NavigatorIOS
+        ref='nav'
         style={styles.container}
         initialRoute={{
           component: ContactsList,
           title: 'Contacts',
           passProps: {
+            onAdd: this.props.onAdd,
             switchTab: this.props.switchTab,
           },
+          rightButtonTitle: 'Add',
+          onRightButtonPress: () => this.refs.nav.push({
+            component: AddContact,
+            title: 'Add Favorite',
+            passProps: {
+              onAdd: this.props.onAdd,
+              switchTab: this.props.switchTab,
+            },
+          }),
         }}
       />
     );
@@ -38,6 +51,7 @@ var ContactsList = React.createClass({
   getInitialState: function() {
     return {
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+      contacts: [],
     };
   },
 
@@ -46,9 +60,27 @@ var ContactsList = React.createClass({
       if (err) {
 
       } else {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(contacts)
-        });
+        api.get('contacts/list/')
+          .then((responseData) => {
+            if (!responseData.status) {
+              for (var i  = 0; i < contacts.length; i++) {
+                var contactName = util.getContactName(contacts[i]);
+                for (var j = 0; j < responseData.length; j++) {
+                  if (contactName === responseData[j].name) {
+                    contacts.splice(i, 1);
+                    i--;
+                    break;
+                  }
+                }
+              }
+            } else {
+              //errors
+            }
+            this.setState({
+              dataSource: this.state.dataSource.cloneWithRows(contacts),
+              contacts: contacts,
+            });
+          }).done();
       }
     });
   },
@@ -60,6 +92,20 @@ var ContactsList = React.createClass({
         renderRow={this._rowContent}
       />
     );
+  },
+
+  removeContact: function(contactName) {
+    var newContacts = this.state.contacts.slice();
+    for (var i = 0; i < newContacts.length; i++) {
+      if (util.getContactName(newContacts[i]) === contactName) {
+        newContacts.splice(i, 1);
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(newContacts),
+          contacts: newContacts,
+        });
+        break;
+      }
+    }
   },
 
   _rowContent: function(rowData) {
@@ -88,8 +134,10 @@ var ContactsList = React.createClass({
       component: AddContact,
       title: 'Add Favorite',
       passProps: {
+        onAdd: this.props.onAdd,
         contactData: rowData,
         switchTab: this.props.switchTab,
+        removeContact: this.removeContact,
       },
     });
   }

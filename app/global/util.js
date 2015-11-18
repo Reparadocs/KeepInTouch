@@ -5,4 +5,9 @@ var range = function(min, max) {
   return x;
 };
 
+var getContactName = function(contact) {
+  return contact.givenName + ' ' + contact.familyName;
+};
+
 exports.range = range;
+exports.getContactName = getContactName;
