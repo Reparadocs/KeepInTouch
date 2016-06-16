@@ -30,6 +30,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     flex: 1,

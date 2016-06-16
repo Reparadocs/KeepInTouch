@@ -118,7 +118,7 @@ var styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '800',
     marginBottom: 400,
-  }
+  },
 });
 
 module.exports = LoginView;

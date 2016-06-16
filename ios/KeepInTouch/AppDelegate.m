@@ -43,9 +43,9 @@
    * see http://facebook.github.io/react-native/docs/runningondevice.html
    */
 
-//   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-  [[FBSDKApplicationDelegate sharedInstance] application:application
-  didFinishLaunchingWithOptions:launchOptions];
+  //jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  //[[FBSDKApplicationDelegate sharedInstance] application:application
+  //didFinishLaunchingWithOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"KeepInTouch"
                                                initialProperties:nil
